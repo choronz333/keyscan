@@ -62,7 +62,7 @@ def get_gist_ids_from_html(html_text: str) -> List[str]:
         href: str = cast(str, a.get("href"))
         match = id_matcher.search(href)
         if match:
-            gist_ids.add(match.group(0))
+            gist_ids.add(match.group(1))
 
     return list(gist_ids)
 
