@@ -15,7 +15,10 @@ def main() -> int:
 
     try:
         for page_number, gist_ids in search_gists(
-            args.keyword, start_page=current_page_number, delay_seconds=args.delay
+            args.keyword,
+            start_page=current_page_number,
+            file_type=args.file_type,
+            delay_seconds=args.delay,
         ):
             processed_pages += 1
             current_page_number = page_number

@@ -9,6 +9,7 @@ class Arguments:
     keyword: str
     start_page: int
     max_pages: int | None
+    file_type: str
     output_path: str
     delay: float
 
@@ -31,6 +32,11 @@ def parse_args() -> Arguments:
         "--max-pages",
         type=int,
         default=None,
+    )
+    parser.add_argument(
+        "--file-type",
+        type=str,
+        default="Dotenv",
     )
     parser.add_argument(
         "--output-path",

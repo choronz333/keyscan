@@ -10,8 +10,8 @@ from bs4 import BeautifulSoup, Tag
 GIST_SEARCH_BASE_URL = "https://gist.github.com/search"
 
 
-def build_search_url(keyword: str, page_number: int) -> str:
-    return f"{GIST_SEARCH_BASE_URL}?l=Dotenv&q={urllib.parse.quote(keyword)}&p={page_number}"
+def build_search_url(keyword: str, page_number: int, file_type: str) -> str:
+    return f"{GIST_SEARCH_BASE_URL}?l={file_type}&q={urllib.parse.quote(keyword)}&p={page_number}"
 
 
 def get_headers() -> dict:
@@ -28,10 +28,11 @@ def get_headers() -> dict:
 def fetch_search_html(
     keyword: str,
     page_number: int,
+    file_type: str,
     session: requests.Session,
     timeout_seconds: int = 20,
 ) -> str:
-    url = build_search_url(keyword, page_number)
+    url = build_search_url(keyword, page_number, file_type)
     response = session.get(url, headers=get_headers(), timeout=timeout_seconds)
     response.raise_for_status()
     return response.text
@@ -71,7 +72,7 @@ def check_page_no_results(html_text: str) -> bool:
 
 
 def search_gists(
-    keyword: str, start_page: int = 1, delay_seconds: float = 2
+    keyword: str, start_page: int, file_type: str, delay_seconds: float = 2
 ) -> Generator[Tuple[int, List[str]], None, None]:
     """
     Continuously iterates through search result pages yielding (page_number, List[gist_ids]).
@@ -83,7 +84,7 @@ def search_gists(
     try:
         page = max(1, start_page)
         while True:
-            html = fetch_search_html(keyword, page, session)
+            html = fetch_search_html(keyword, page, file_type, session)
 
             if check_page_no_results(html):
                 break
