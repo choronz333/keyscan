@@ -65,13 +65,13 @@ def filter_file_type(gist_json: GistJSON, file_type: str) -> List[FileJSON]:
 
 
 def get_file_contents(
-    session: requests.Session, gist: str, file_type: str, timeout_seconds: int = 20
+    session: requests.Session, gist_id: str, file_type: str, timeout_seconds: int = 20
 ) -> List[str]:
     """
     Return an array of strings containing the file contents of the desired type.
     """
 
-    gist_json = get_gist(session, gist, timeout_seconds=timeout_seconds)
+    gist_json = get_gist(session, gist_id, timeout_seconds=timeout_seconds)
     filtered_files = filter_file_type(gist_json, file_type)
 
     result: List[str] = []
