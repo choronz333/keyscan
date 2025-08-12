@@ -1,0 +1,98 @@
+import re
+import time
+import urllib.parse
+import requests
+from typing import Generator, List, Sequence, Set, Tuple, cast
+
+from bs4 import BeautifulSoup, Tag
+
+
+GIST_SEARCH_BASE_URL = "https://gist.github.com/search"
+
+
+def build_search_url(keyword: str, page_number: int) -> str:
+    return f"{GIST_SEARCH_BASE_URL}?l=Dotenv&q={urllib.parse.quote(keyword)}&p={page_number}"
+
+
+def get_headers() -> dict:
+    return {
+        "User-Agent": (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+    }
+
+
+def fetch_search_html(
+    keyword: str,
+    page_number: int,
+    session: requests.Session,
+    timeout_seconds: int = 20,
+) -> str:
+    url = build_search_url(keyword, page_number)
+    response = session.get(url, headers=get_headers(), timeout=timeout_seconds)
+    response.raise_for_status()
+    return response.text
+
+
+def get_gist_ids_from_html(html_text: str) -> List[str]:
+    """
+    Parse gist IDs from a GitHub Gist search HTML page.
+    Searches for <a> tags with links to the gist page.
+    The link will match the pattern /{username}/{gist_id}.
+    """
+
+    beautiful_soup = BeautifulSoup(html_text, "html.parser")
+
+    def href_check(href: str) -> bool:
+        return re.compile(r"\/[^\/]+\/[0-9a-f]{32}").search(href) != None
+
+    a_tags: Sequence[Tag] = cast(
+        Sequence[Tag],
+        beautiful_soup.find_all("a", class_="Link--muted", href=href_check),
+    )
+
+    id_matcher = re.compile(r"\/[^\/]+\/([0-9a-f]{32})", re.IGNORECASE)
+
+    gist_ids: Set[str] = set()
+    for a in a_tags:
+        href: str = cast(str, a.get("href"))
+        match = id_matcher.search(href)
+        if match:
+            gist_ids.add(match.group(0))
+
+    return list(gist_ids)
+
+
+def check_page_no_results(html_text: str) -> bool:
+    return "We couldn\u2019t find any gists matching" in html_text
+
+
+def search_gists(
+    keyword: str, start_page: int = 1, delay_seconds: float = 2
+) -> Generator[Tuple[int, List[str]], None, None]:
+    """
+    Continuously iterates through search result pages yielding (page_number, List[gist_ids]).
+
+    Stops when no results page is detected or when an HTTP error occurs.
+    """
+
+    session = requests.Session()
+    try:
+        page = max(1, start_page)
+        while True:
+            html = fetch_search_html(keyword, page, session)
+
+            if check_page_no_results(html):
+                break
+
+            gist_ids = get_gist_ids_from_html(html)
+            yield page, gist_ids
+
+            page += 1
+            if delay_seconds > 0:
+                time.sleep(delay_seconds)
+    finally:
+        session.close()
