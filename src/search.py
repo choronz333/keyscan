@@ -48,14 +48,14 @@ def get_gist_ids_from_html(html_text: str) -> List[str]:
     beautiful_soup = BeautifulSoup(html_text, "html.parser")
 
     def href_check(href: str) -> bool:
-        return re.compile(r"\/[^\/]+\/[0-9a-f]{32}").search(href) != None
+        return re.compile(r"\/[^\/]+\/[0-9a-f]{20,}").search(href) != None
 
     a_tags: Sequence[Tag] = cast(
         Sequence[Tag],
         beautiful_soup.find_all("a", class_="Link--muted", href=href_check),
     )
 
-    id_matcher = re.compile(r"\/[^\/]+\/([0-9a-f]{32})", re.IGNORECASE)
+    id_matcher = re.compile(r"\/[^\/]+\/([0-9a-f]{20,})", re.IGNORECASE)
 
     gist_ids: Set[str] = set()
     for a in a_tags:
