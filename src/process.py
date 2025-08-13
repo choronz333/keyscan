@@ -39,6 +39,7 @@ class ProcessGistResult(TypedDict):
     gist_id: str
     confidence: CONFIDENCE_LEVELS_TYPE
     validity: VALIDITY
+    line: str
 
 
 def process_gist(
@@ -98,6 +99,7 @@ def process_gist(
                     provider=provider,
                     confidence=confidence,
                     validity=validity,
+                    line=line,
                 )
                 result.append(
                     {
@@ -106,6 +108,7 @@ def process_gist(
                         "gist_id": gist_id,
                         "confidence": confidence,
                         "validity": validity,
+                        "line": line,
                     }
                 )
 

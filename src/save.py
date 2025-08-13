@@ -28,6 +28,7 @@ def save_record(
     provider: PROVIDERS_TYPE,
     confidence: str,
     validity: VALIDITY,
+    line: str,
 ) -> str:
     """
     Save an exposure record for additional verification. Will save only if
@@ -42,6 +43,7 @@ def save_record(
         "provider": provider,
         "confidence": confidence,
         "validity": validity,
+        "line": line,
         "created_at": datetime.now().strftime("%H:%M:%S on %B %d, %Y"),
     }
     
