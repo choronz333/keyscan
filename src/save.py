@@ -47,7 +47,7 @@ def save_record(
         "created_at": datetime.now().strftime("%H:%M:%S on %B %d, %Y"),
     }
 
-    file_path = os.path.join(output_dir, validity, f"{gist_id}.json")
+    file_path = os.path.join(output_dir, validity, f"{owner}_{gist_id}_{os.urandom(8).hex()}.json")
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(record, f, indent=4)
 
