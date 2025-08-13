@@ -1,4 +1,4 @@
-from typing import Dict, List, TypedDict, cast
+from typing import Dict, List, Literal, TypedDict, cast
 
 import requests
 
@@ -20,6 +20,7 @@ class FileJSON(TypedDict):
 class GistJSON(TypedDict):
     html_url: str
     files: Dict[str, FileJSON]
+    owner: Dict[Literal["login"], str]
 
 
 GIST_API_BASE_URL = "https://api.github.com/gists"
@@ -44,7 +45,7 @@ def get_api_headers() -> Dict[str, str]:
     return headers
 
 
-def get_gist(
+def fetch_gist_by_id(
     session: requests.Session, gist_id: str, timeout_seconds: int = 20
 ) -> GistJSON:
     """Get's gist using ID and GitHub API. May throw exceptions."""
@@ -64,21 +65,31 @@ def filter_file_type(gist_json: GistJSON, file_type: str) -> List[FileJSON]:
     return result
 
 
-def get_file_contents(
+class GistInfo:
+    owner: str
+    file_contents: List[str]
+
+    def __init__(self, owner: str, file_contents: List[str]):
+        self.owner = owner
+        self.file_contents = file_contents
+
+
+def get_gist_info(
     session: requests.Session, gist_id: str, file_type: str, timeout_seconds: int = 20
-) -> List[str]:
+) -> GistInfo:
     """
     Return an array of strings containing the file contents of the desired type.
     """
 
-    gist_json = get_gist(session, gist_id, timeout_seconds=timeout_seconds)
+    gist_json = fetch_gist_by_id(session, gist_id, timeout_seconds=timeout_seconds)
     filtered_files = filter_file_type(gist_json, file_type)
 
-    result: List[str] = []
+    owner = gist_json.get("owner").get("login", "_UNKNOWN_USER")
+    file_contents: List[str] = []
     for file in filtered_files:
         truncated = file.get("truncated")
         if not truncated:
             # TODO: Size limit?
-            result.append(file.get("content"))
+            file_contents.append(file.get("content"))
 
-    return result
+    return GistInfo(owner, file_contents)
