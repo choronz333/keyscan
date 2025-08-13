@@ -158,9 +158,12 @@ PROVIDERS_TO_VERIFIER_MAP: Dict[PROVIDERS_TYPE, Callable[[str], bool]] = {
 }
 
 
+VALIDITY = Literal["VALID", "INVALID", "UNKNOWN"]
+
+
 def verify(
     provider: PROVIDERS_TYPE, api_key: str
-) -> Literal["VALID", "INVALID", "UNKNOWN"]:
+) -> VALIDITY:
     """Return True if key is valid, False if invalid, None if provider unsupported."""
     fn = PROVIDERS_TO_VERIFIER_MAP.get(provider)
     if not fn:
