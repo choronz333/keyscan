@@ -7,6 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class Arguments:
     keyword: str
+    model: str
     start_page: int
     max_pages: int | None
     file_type: str
@@ -20,6 +21,11 @@ def parse_args() -> Arguments:
     )
     parser.add_argument(
         "--keyword",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "--model",
         type=str,
         required=True,
     )
