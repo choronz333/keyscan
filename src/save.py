@@ -35,8 +35,6 @@ def save_record(
 
     Will save to: {output_dir}/{validity}/{gist_id}.json
     """
-    create_directory(output_dir)
-
     record: Dict = {
         "gist_id": gist_id,
         "owner": owner,
@@ -46,8 +44,10 @@ def save_record(
         "validity": validity,
         "created_at": datetime.now().strftime("%H:%M:%S on %B %d, %Y"),
     }
-
-    file_path = os.path.join(output_dir, validity, f"{owner}_{gist_id}_{os.urandom(8).hex()}.json")
+    
+    write_directory = os.path.join(output_dir, validity)
+    create_directory(write_directory)
+    file_path = os.path.join(write_directory, f"{owner}_{gist_id}_{os.urandom(8).hex()}.json")
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(record, f, indent=4)
 
