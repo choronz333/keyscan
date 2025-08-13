@@ -83,8 +83,8 @@ def build_prompt(line: str) -> List[Dict[str, str]]:
 
 
 class ClassificationResponse:
-    confidence: str | None = None
-    provider: str | None = None
+    confidence: CONFIDENCE_LEVELS_TYPE | None = None
+    provider: PROVIDERS_TYPE | None = None
     line: str
 
     def __init__(self, line: str, response_content: str | None):
