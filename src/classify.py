@@ -33,7 +33,7 @@ PROVIDERS_TYPE = Literal[
     "stability_ai",
     "nvidia",
     "github",
-    "copilot"
+    "copilot",
     "other",
 ]
 PROVIDERS: Set[PROVIDERS_TYPE] = set(get_args(PROVIDERS_TYPE))
