@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Literal, Optional, Set, get_args
 
 import ollama
 
+from util import print_err
+
 
 PROVIDERS_TYPE = Literal[
     "openai",
@@ -98,8 +100,9 @@ class ClassificationResponse:
             json_object: Dict[str, Any] = json.loads(response_json)
             self.confidence = parse_confidence(json_object.get("confidence", None))
             self.provider = parse_provider(json_object.get("provider", None))
-        finally:
-            pass
+        except Exception as exception:
+            print_err(f"ClassificationResponse exception: {exception}")
+            print_err(f"Response JSON: {response_json}")
 
 
 def classify_single_line(
