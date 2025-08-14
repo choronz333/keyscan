@@ -33,7 +33,6 @@ def search_one_keyword(keyword: str, args, database: ScannedDb) -> int:
 
     for page_number, gist_ids in search_gists(
         keyword,
-        start_page=args.start_page,
         file_type=args.file_type,
         delay_seconds=args.delay,
     ):

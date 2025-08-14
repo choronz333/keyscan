@@ -72,7 +72,7 @@ def check_page_no_results(html_text: str) -> bool:
 
 
 def search_gists(
-    keyword: str, start_page: int, file_type: str, delay_seconds: float
+    keyword: str, file_type: str, delay_seconds: float
 ) -> Generator[Tuple[int, List[str]], None, None]:
     """
     Continuously iterates through search result pages yielding (page_number, List[gist_ids]).
@@ -82,17 +82,17 @@ def search_gists(
 
     session = requests.Session()
     try:
-        page = max(1, start_page)
+        current_page = 1
         while True:
-            html = fetch_search_html(keyword, page, file_type, session)
+            html = fetch_search_html(keyword, current_page, file_type, session)
 
             if check_page_no_results(html):
                 break
 
             gist_ids = get_gist_ids_from_html(html)
-            yield page, gist_ids
+            yield current_page, gist_ids
 
-            page += 1
+            current_page += 1
             if delay_seconds > 0:
                 time.sleep(delay_seconds)
     finally:

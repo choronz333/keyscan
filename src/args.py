@@ -8,8 +8,6 @@ from dataclasses import dataclass
 class Arguments:
     keywords_file: str
     model: str
-    start_page: int
-    max_pages: int | None
     file_type: str
     output_path: str
     delay: float
@@ -30,16 +28,6 @@ def parse_args() -> Arguments:
         "--model",
         type=str,
         required=True,
-    )
-    parser.add_argument(
-        "--start-page",
-        type=int,
-        default=1,
-    )
-    parser.add_argument(
-        "--max-pages",
-        type=int,
-        default=None,
     )
     parser.add_argument(
         "--file-type",
