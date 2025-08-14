@@ -91,8 +91,10 @@ def process_gist(
 
             validity: VALIDITY = verify(provider, value)
 
-            if validity == "VALID" or (
-                validity == "UNKNOWN" and confidence == "MEDIUM"
+            if (
+                validity == "VALID"
+                or (validity == "UNKNOWN" and confidence in ["MEDIUM", "HIGH"])
+                or confidence == "HIGH"
             ):
                 path = save_record(
                     output_dir=output_dir,

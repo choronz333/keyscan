@@ -31,8 +31,7 @@ def save_record(
     line: str,
 ) -> str:
     """
-    Save an exposure record for additional verification. Will save only if
-    validity is UNKNOWN or VALID.
+    Save an exposure record for additional verification.
 
     Will save to: {output_dir}/{validity}/{gist_id}.json
     """
