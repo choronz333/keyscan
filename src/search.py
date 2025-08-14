@@ -72,7 +72,7 @@ def check_page_no_results(html_text: str) -> bool:
 
 
 def search_gists(
-    keyword: str, start_page: int, file_type: str, delay_seconds: float = 2
+    keyword: str, start_page: int, file_type: str, delay_seconds: float
 ) -> Generator[Tuple[int, List[str]], None, None]:
     """
     Continuously iterates through search result pages yielding (page_number, List[gist_ids]).
