@@ -109,6 +109,7 @@ class ClassificationResponse:
             self.provider = parse_provider(json_object.get("provider", None))
         except Exception as exception:
             print_err(f"ClassificationResponse exception: {exception}")
+            print_err(f"Response Content: {response_content}")
             print_err(f"Response JSON: {response_json}")
 
 
