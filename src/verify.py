@@ -131,6 +131,17 @@ def verify_stability_ai(api_key: str) -> bool:
     return status == 200
 
 
+def verify_github(api_key: str) -> bool:
+    status = _http_get_status_code(
+        "https://api.github.com/user",
+        {
+            "Authorization": f"Bearer {api_key}",
+            "Accept": "application/vnd.github+json",
+        },
+    )
+    return status == 200
+
+
 # Unsupported verifications
 # Deepinfra - Models endpoint open.
 # Azure - Endpoint unknown...?
@@ -155,6 +166,7 @@ PROVIDERS_TO_VERIFIER_MAP: Dict[PROVIDERS_TYPE, Callable[[str], bool]] = {
     "fireworks": verify_fireworks,
     "huggingface": verify_huggingface,
     "stability_ai": verify_stability_ai,
+    "github": verify_github,
 }
 
 
