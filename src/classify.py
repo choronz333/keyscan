@@ -56,14 +56,14 @@ def shallow_extract_json(text: str) -> Optional[str]:
     """
     Note: Returned JSON may not be valid.
     """
-    start_idx = None
-    for i, ch in enumerate(text):
-        if ch == "{":
-            if start_idx is None:
-                start_idx = i
-        elif ch == "}":
-            if start_idx is not None:
-                return text[start_idx : i + 1]
+    end_index = None
+    for i, ch in reversed(list(enumerate(text))):
+        if ch == "}":
+            if end_index is None:
+                end_index = i
+        elif ch == "{":
+            if end_index is not None:
+                return text[i : end_index + 1]
     return None
 
 
