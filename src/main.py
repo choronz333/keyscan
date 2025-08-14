@@ -15,7 +15,7 @@ def get_keywords(keywords_file: str) -> List[str]:
         with open(keywords_file, "r") as file:
             for line in file:
                 keyword = line.strip()
-                if keyword:
+                if keyword and not keyword.startswith("#") and not keyword.startswith("//"):
                     keywords.append(keyword)
         return keywords
     except FileNotFoundError as exception:
