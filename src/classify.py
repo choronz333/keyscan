@@ -84,7 +84,8 @@ def build_prompt(line: str) -> List[Dict[str, str]]:
         f"The value must be a value from the following list: {providers_string}"
         "\n"
         "A potentially valid API key does not include example values or placeholder values. "
-        "A potentially valid API key should be directly usable for authentiating an API request."
+        "A potentially valid API key should be directly usable for authentiating an API request. "
+        "Do not overthink."
     )
     user = f"Analyze the following variable:\n{line}\n"
     return [
@@ -124,7 +125,10 @@ def classify_single_line(
     response = ollama.chat(
         model=model,
         messages=messages,
-        options={"temperature": 0},
+        options={
+            "temperature": 0,
+            "num_predict": 4000,
+        },
     )
 
     response_content = response.message.content
