@@ -38,6 +38,7 @@ def save_record(
     record: Dict = {
         "gist_id": gist_id,
         "owner": owner,
+        "url": f"https://gist.github.com/{owner}/{gist_id}",
         "message": generate_message(provider, gist_id, owner),
         "provider": provider,
         "confidence": confidence,
