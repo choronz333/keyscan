@@ -95,5 +95,7 @@ def get_gist_info(
         if not truncated:
             # TODO: Size limit?
             file_contents.append(file.get("content"))
+        else:
+            print(f"Truncated file encountered: {gist_id}")
 
     return GistInfo(owner, file_contents)
