@@ -5,12 +5,15 @@ from args import parse_args
 from util import create_directory, print_err, save_processing_state
 from search import search_gists
 from process import process_gist
+from scanned_db import ScannedDb
 
 
 def main() -> int:
     args = parse_args()
 
     create_directory(os.path.dirname(args.output_path))
+
+    database = ScannedDb(args.scanned_db)
 
     processed_pages = 0
     processed_gists = 0
@@ -30,6 +33,10 @@ def main() -> int:
 
             output_dir = os.path.dirname(args.output_path)
             for gist_id in gist_ids:
+                if database.seen(gist_id):
+                    print(f"Skipping already scanned gist: {gist_id}")
+                    continue
+
                 print(f"Processing gist \"{gist_id}\"...")
                 results = process_gist(
                     gist_id=gist_id,
@@ -42,6 +49,8 @@ def main() -> int:
                     print(f"Processed {gist_id}: {len(results)} record(s) saved.")
                     for result in results:
                         print(result)
+
+                database.add(gist_id)
 
             if args.max_pages != None and processed_pages >= args.max_pages:
                 print("Reached page limit. Exiting...")

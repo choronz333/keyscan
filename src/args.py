@@ -13,6 +13,7 @@ class Arguments:
     file_type: str
     output_path: str
     delay: float
+    scanned_db: str
 
 
 def parse_args() -> Arguments:
@@ -54,5 +55,11 @@ def parse_args() -> Arguments:
         type=float,
         default=0,
         help="Optional delay between requests in seconds",
+    )
+    parser.add_argument(
+        "--scanned-db",
+        type=str,
+        default=os.path.join("output", "scanned.txt"),
+        help="Path to a newline-separated file of scanned gist IDs",
     )
     return Arguments(**vars(parser.parse_args()))
