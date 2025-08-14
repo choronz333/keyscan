@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Arguments:
-    keyword: str
+    keywords_file: str
     model: str
     start_page: int
     max_pages: int | None
@@ -21,9 +21,10 @@ def parse_args() -> Arguments:
         prog="Keyscan", description="Keyscan: GitHub Gists scanner."
     )
     parser.add_argument(
-        "--keyword",
+        "--keywords-file",
         type=str,
         required=True,
+        help="Path to a newline-separated list of keywords to search",
     )
     parser.add_argument(
         "--model",
