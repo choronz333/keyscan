@@ -42,7 +42,7 @@ def parse_args() -> Arguments:
     parser.add_argument(
         "--delay",
         type=float,
-        default=0,
+        default=5,
         help="Optional delay between requests in seconds",
     )
     parser.add_argument(
