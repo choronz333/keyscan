@@ -1,8 +1,8 @@
-from typing import List, Set, TypedDict
+from typing import List, Set, TypedDict, cast
 
 import requests
 
-from processing import GIST_FILE_TYPE, extract_verifiable_value, preprocess_contents
+from processing import ALL_FILE_TYPES, GIST_FILE_TYPE, extract_verifiable_value, preprocess_contents
 from src.args import Arguments
 from src.scanned_db import ScannedDb
 from src.search_gists import search_gists
@@ -108,6 +108,11 @@ def search_one_keyword(keyword: str, args: Arguments, database: ScannedDb, sessi
     Returns the total number of gists processed.
     """
     processed_gists = 0
+    
+    file_type = args.file_type
+    if not file_type in ALL_FILE_TYPES:
+        raise Exception(f"Unsupported file type {file_type}. Please add processing functions for the new file type in processing.py.")
+    file_type = cast(GIST_FILE_TYPE, file_type)
 
     for page_number, gist_ids in search_gists(
         keyword,
@@ -126,7 +131,7 @@ def search_one_keyword(keyword: str, args: Arguments, database: ScannedDb, sessi
             results = process_gist(
                 session=session,
                 gist_id=gist_id,
-                file_type=args.file_type,
+                file_type=file_type,
                 model=args.model,
                 output_dir=args.output_path,
             )
