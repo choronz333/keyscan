@@ -3,6 +3,10 @@ from typing import List, Set, TypedDict
 import requests
 
 from processing import GIST_FILE_TYPE, extract_verifiable_value, preprocess_contents
+from src.args import Arguments
+from src.scanned_db import ScannedDb
+from src.search_gists import search_gists
+from src.util import save_processing_state
 from verify import verify, VALIDITY
 from src.gists import GistInfo, get_gist_info
 from src.llm_classify import (
@@ -95,3 +99,45 @@ def process_gist(
             )
 
     return result
+
+
+def search_one_keyword(keyword: str, args: Arguments, database: ScannedDb, session: requests.Session) -> int:
+    """
+    Search all gists given a file type matching a keyword.
+
+    Returns the total number of gists processed.
+    """
+    processed_gists = 0
+
+    for page_number, gist_ids in search_gists(
+        keyword,
+        file_type=args.file_type,
+        delay_seconds=args.delay,
+    ):
+        print(f"Keyword '{keyword}' — Page {page_number}:")
+        print(f"Gists found: {gist_ids}")
+
+        for gist_id in gist_ids:
+            if database.seen(gist_id):
+                print(f"Skipping already scanned gist: {gist_id}")
+                continue
+
+            print(f'Processing gist "{gist_id}"...')
+            results = process_gist(
+                session=session,
+                gist_id=gist_id,
+                file_type=args.file_type,
+                model=args.model,
+                output_dir=args.output_path,
+            )
+            processed_gists += 1
+            if len(results) > 0:
+                print(f"Processed {gist_id}: {len(results)} record(s) saved.")
+                for result in results:
+                    print(result)
+
+            database.add(gist_id)
+
+        save_processing_state(args.output_path, keyword, page_number)
+
+    return processed_gists

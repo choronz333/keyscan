@@ -6,9 +6,8 @@ import requests
 from dotenv import load_dotenv, find_dotenv
 
 from src.args import parse_args
-from src.pipeline import process_gist
-from src.util import create_directory, print_err, save_processing_state
-from src.search_gists import search_gists
+from src.pipeline import search_one_keyword
+from src.util import create_directory, print_err
 from src.scanned_db import ScannedDb
 
 
@@ -38,48 +37,6 @@ def get_keywords(keywords_file: str) -> List[str]:
         raise exception
 
 
-def search_one_keyword(keyword: str, args, database: ScannedDb) -> int:
-    """
-    Search all gists given a file type matching a keyword.
-
-    Returns the total number of gists processed.
-    """
-    processed_gists = 0
-
-    for page_number, gist_ids in search_gists(
-        keyword,
-        file_type=args.file_type,
-        delay_seconds=args.delay,
-    ):
-        print(f"Keyword '{keyword}' — Page {page_number}:")
-        print(f"Gists found: {gist_ids}")
-
-        for gist_id in gist_ids:
-            if database.seen(gist_id):
-                print(f"Skipping already scanned gist: {gist_id}")
-                continue
-
-            print(f'Processing gist "{gist_id}"...')
-            results = process_gist(
-                session=session,
-                gist_id=gist_id,
-                file_type=args.file_type,
-                model=args.model,
-                output_dir=args.output_path,
-            )
-            processed_gists += 1
-            if len(results) > 0:
-                print(f"Processed {gist_id}: {len(results)} record(s) saved.")
-                for result in results:
-                    print(result)
-
-            database.add(gist_id)
-
-        save_processing_state(args.output_path, keyword, page_number)
-
-    return processed_gists
-
-
 def main() -> int:
     args = parse_args()
 
@@ -92,7 +49,7 @@ def main() -> int:
     try:
         keywords_list = get_keywords(args.keywords_file)
         for keyword in keywords_list:
-            gists_processed = search_one_keyword(keyword, args, database)
+            gists_processed = search_one_keyword(keyword, args, database, session)
             total_gists += gists_processed
 
     except KeyboardInterrupt:
