@@ -1,6 +1,5 @@
 import os
 import argparse
-import time
 from dataclasses import dataclass
 
 
@@ -37,7 +36,7 @@ def parse_args() -> Arguments:
     parser.add_argument(
         "--output-path",
         type=str,
-        default=os.path.join("output", f"state_{round(time.time())}.json"),
+        default="./output",
     )
     parser.add_argument(
         "--delay",

@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 import sys
 
@@ -13,7 +14,8 @@ def create_file(path: str) -> None:
         with open(path, "w") as _file:
             pass
 
-def save_processing_state(state_path: str, keyword: str, page_number: int) -> None:
+def save_processing_state(output_path: str, keyword: str, page_number: int) -> None:
+    state_path = os.path.join(output_path, "state", f"{round(time.time())}.json")
     state = {
         "keyword": keyword,
         "last_page": page_number,

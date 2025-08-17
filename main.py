@@ -54,7 +54,6 @@ def search_one_keyword(keyword: str, args, database: ScannedDb) -> int:
         print(f"Keyword '{keyword}' — Page {page_number}:")
         print(f"Gists found: {gist_ids}")
 
-        output_dir = os.path.dirname(args.output_path)
         for gist_id in gist_ids:
             if database.seen(gist_id):
                 print(f"Skipping already scanned gist: {gist_id}")
@@ -66,7 +65,7 @@ def search_one_keyword(keyword: str, args, database: ScannedDb) -> int:
                 gist_id=gist_id,
                 file_type=args.file_type,
                 model=args.model,
-                output_dir=output_dir,
+                output_dir=args.output_path,
             )
             processed_gists += 1
             if len(results) > 0:
