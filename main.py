@@ -8,7 +8,7 @@ from dotenv import load_dotenv, find_dotenv
 from src.args import parse_args
 from src.pipeline import process_gist
 from src.util import create_directory, print_err, save_processing_state
-from src.search import search_gists
+from src.search_gists import search_gists
 from src.scanned_db import ScannedDb
 
 
