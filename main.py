@@ -2,11 +2,11 @@ import os
 import traceback
 from typing import List
 
-from args import parse_args
-from util import create_directory, print_err, save_processing_state
-from search import search_gists
-from process import process_gist
-from scanned_db import ScannedDb
+from src.args import parse_args
+from src.pipeline import process_gist
+from src.util import create_directory, print_err, save_processing_state
+from src.search import search_gists
+from src.scanned_db import ScannedDb
 
 
 def get_keywords(keywords_file: str) -> List[str]:
@@ -15,7 +15,11 @@ def get_keywords(keywords_file: str) -> List[str]:
         with open(keywords_file, "r") as file:
             for line in file:
                 keyword = line.strip()
-                if keyword and not keyword.startswith("#") and not keyword.startswith("//"):
+                if (
+                    keyword
+                    and not keyword.startswith("#")
+                    and not keyword.startswith("//")
+                ):
                     keywords.append(keyword)
         return keywords
     except FileNotFoundError as exception:

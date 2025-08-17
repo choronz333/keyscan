@@ -1,36 +1,16 @@
-import re
 from typing import List, Set, TypedDict
 
 import requests
 
 from gists import GistInfo, get_gist_info
-from preprocess import normalize_all_contents
-from classify import (
+from processing import GIST_FILE_TYPE, extract_verifiable_value, preprocess_contents
+from llm_classify import (
     CONFIDENCE_LEVELS_TYPE,
     ClassificationResponse,
     classify_lines,
 )
 from verify import verify, VALIDITY
 from save import save_record
-
-
-def _get_value_from_env(line: str) -> str | None:
-    # Gets everything after the first "="
-    match = re.match(r"^[^=]+=(.+)$", line)
-    if match == None:
-        return None
-    value = match.group(1)
-    if value == None:
-        return None
-    value = value.strip()
-    # Strip surrounding quotes if any
-    if (value.startswith('"') and value.endswith('"')) or (
-        value.startswith("'") and value.endswith("'")
-    ):
-        value = value[1:-1]
-    if value == "":
-        return None
-    return value
 
 
 class ProcessGistResult(TypedDict):
@@ -44,7 +24,7 @@ class ProcessGistResult(TypedDict):
 
 def process_gist(
     gist_id: str,
-    file_type: str,
+    file_type: GIST_FILE_TYPE,
     model: str,
     output_dir: str,
 ) -> List[ProcessGistResult]:
@@ -57,7 +37,7 @@ def process_gist(
     try:
         gist_info: GistInfo = get_gist_info(session, gist_id, file_type)
 
-        lines: List[str] = normalize_all_contents(gist_info.file_contents, file_type)
+        lines: List[str] = preprocess_contents(gist_info.file_contents, file_type)
 
         classifications: List[ClassificationResponse] = classify_lines(lines, model)
 
@@ -78,8 +58,7 @@ def process_gist(
             if confidence == "NONE":
                 continue
 
-            # TODO: Support more file types
-            value = _get_value_from_env(line)
+            value = extract_verifiable_value(line, file_type)
 
             if value == None:
                 continue

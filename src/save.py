@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Dict
 
 from util import create_directory
-from classify import PROVIDERS_TYPE
+from llm_classify import PROVIDERS_TYPE
 from verify import VALIDITY
 
 
@@ -46,10 +46,12 @@ def save_record(
         "line": line,
         "created_at": datetime.now().strftime("%H:%M:%S on %B %d, %Y"),
     }
-    
+
     write_directory = os.path.join(output_dir, validity)
     create_directory(write_directory)
-    file_path = os.path.join(write_directory, f"{owner}_{gist_id}_{os.urandom(8).hex()}.json")
+    file_path = os.path.join(
+        write_directory, f"{owner}_{gist_id}_{os.urandom(8).hex()}.json"
+    )
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(record, f, indent=4)
 

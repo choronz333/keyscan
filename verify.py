@@ -1,7 +1,7 @@
 from typing import Callable, Dict, Literal
 import requests
 
-from classify import PROVIDERS_TYPE
+from src.llm_classify import PROVIDERS_TYPE
 
 
 DEFAULT_TIMEOUT_SECONDS = 5
@@ -176,7 +176,6 @@ VALIDITY = Literal["VALID", "INVALID", "UNKNOWN"]
 def verify(
     provider: PROVIDERS_TYPE, api_key: str
 ) -> VALIDITY:
-    """Return True if key is valid, False if invalid, None if provider unsupported."""
     fn = PROVIDERS_TO_VERIFIER_MAP.get(provider)
     if not fn:
         return "UNKNOWN"

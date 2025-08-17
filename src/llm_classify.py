@@ -3,40 +3,10 @@ from typing import Any, Dict, List, Literal, Optional, Set, get_args
 
 import ollama
 
+from providers import PROVIDERS_TYPE, parse_provider
+from prompt import get_prompt
 from util import print_err
 
-
-PROVIDERS_TYPE = Literal[
-    "openai",
-    "anthropic",
-    "google",
-    "gemini",
-    "grok",
-    "xai",
-    "groq",
-    "deepseek",
-    "mistral",
-    "cohere",
-    "black_forest_labs",
-    "together",
-    "perplexity",
-    "openrouter",
-    "replicate",
-    "fireworks",
-    "deepinfra",
-    "azure",
-    "azure_openai",
-    "aws",
-    "bedrock",
-    "aws_bedrock",
-    "huggingface",
-    "stability_ai",
-    "nvidia",
-    "github",
-    "copilot",
-    "other",
-]
-PROVIDERS: Set[PROVIDERS_TYPE] = set(get_args(PROVIDERS_TYPE))
 
 CONFIDENCE_LEVELS_TYPE = Literal["NONE", "LOW", "MEDIUM", "HIGH"]
 CONFIDENCE_LEVELS: Set[CONFIDENCE_LEVELS_TYPE] = set(get_args(CONFIDENCE_LEVELS_TYPE))
@@ -45,12 +15,6 @@ CONFIDENCE_LEVELS: Set[CONFIDENCE_LEVELS_TYPE] = set(get_args(CONFIDENCE_LEVELS_
 def parse_confidence(confidence: str | None) -> CONFIDENCE_LEVELS_TYPE | None:
     if confidence in CONFIDENCE_LEVELS:
         return confidence
-    return None
-
-
-def parse_provider(providers: str | None) -> PROVIDERS_TYPE | None:
-    if providers in PROVIDERS:
-        return providers
     return None
 
 
@@ -67,31 +31,6 @@ def shallow_extract_json(text: str) -> Optional[str]:
             if end_index is not None:
                 return text[i : end_index + 1]
     return None
-
-
-def build_prompt(line: str) -> List[Dict[str, str]]:
-    providers_string = ", ".join(PROVIDERS)
-    system = (
-        "You are a highly specialized AI assistant tasked with analyzing a single variable from a .env file. "
-        "Your primary task is to determine if the value of the variable contains a potentially valid API key. "
-        "Your output must be in a strict JSON format with two keys: `confidence` and `provider`."
-        "\n\n"
-        "The `confidence` key indicates how confident you are that the value is a potentially valid API key. "
-        "The confidence value must be a string value from the following list: "
-        '"NONE", "LOW", "MEDIUM", "HIGH".'
-        "\n"
-        "The `provider` key indicates the provider of the API key. "
-        f"The value must be a value from the following list: {providers_string}"
-        "\n"
-        "A potentially valid API key does not include example values or placeholder values. "
-        "A potentially valid API key should be directly usable for authentiating an API request. "
-        "Do not overthink."
-    )
-    user = f"Analyze the following variable:\n{line}\n"
-    return [
-        {"role": "system", "content": system},
-        {"role": "user", "content": user},
-    ]
 
 
 class ClassificationResponse:
@@ -120,7 +59,7 @@ def classify_single_line(
     line: str,
     model: str,
 ) -> ClassificationResponse:
-    messages = build_prompt(line)
+    messages = get_prompt(line)
 
     response = ollama.chat(
         model=model,
