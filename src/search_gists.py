@@ -71,6 +71,9 @@ def check_page_no_results(html_text: str) -> bool:
     return "We couldn\u2019t find any gists matching" in html_text
 
 
+last_fetch_time = time.time() - 99999
+
+
 def search_gists(
     keyword: str, file_type: str, delay_seconds: float
 ) -> Generator[Tuple[int, List[str]], None, None]:
@@ -81,10 +84,17 @@ def search_gists(
     """
 
     session = requests.Session()
+    global last_fetch_time
     try:
         current_page = 1
         while True:
+            time_since_last_fetch = time.time() - last_fetch_time
+            sleep_duration = delay_seconds - time_since_last_fetch
+            if sleep_duration > 0:
+                time.sleep(delay_seconds)
+
             html = fetch_search_html(keyword, current_page, file_type, session)
+            last_fetch_time = time.time()
 
             if check_page_no_results(html):
                 break
@@ -93,7 +103,5 @@ def search_gists(
             yield current_page, gist_ids
 
             current_page += 1
-            if delay_seconds > 0:
-                time.sleep(delay_seconds)
     finally:
         session.close()
