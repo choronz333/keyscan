@@ -1,6 +1,5 @@
 internal/*
 output/*
-keywords.txt
 .env
 
 __pycache__
