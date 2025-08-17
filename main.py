@@ -2,11 +2,22 @@ import os
 import traceback
 from typing import List
 
+import requests
+from dotenv import load_dotenv, find_dotenv
+
 from src.args import parse_args
 from src.pipeline import process_gist
 from src.util import create_directory, print_err, save_processing_state
 from src.search import search_gists
 from src.scanned_db import ScannedDb
+
+
+load_dotenv(find_dotenv(), override=False)
+
+session = requests.Session()
+gh_sess_cookie = os.getenv("GITHUB_SESSION_COOKIE")
+if gh_sess_cookie:
+    session.headers["_gh_sess"] = gh_sess_cookie
 
 
 def get_keywords(keywords_file: str) -> List[str]:
@@ -51,6 +62,7 @@ def search_one_keyword(keyword: str, args, database: ScannedDb) -> int:
 
             print(f'Processing gist "{gist_id}"...')
             results = process_gist(
+                session=session,
                 gist_id=gist_id,
                 file_type=args.file_type,
                 model=args.model,
