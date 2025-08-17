@@ -5,7 +5,7 @@ import ollama
 
 from providers import PROVIDERS_TYPE, parse_provider
 from prompt import get_prompt
-from util import print_err
+from src.util import print_err
 
 
 CONFIDENCE_LEVELS_TYPE = Literal["NONE", "LOW", "MEDIUM", "HIGH"]

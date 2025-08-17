@@ -3,9 +3,9 @@ import os
 from datetime import datetime
 from typing import Dict
 
-from util import create_directory
-from llm_classify import PROVIDERS_TYPE
 from verify import VALIDITY
+from src.llm_classify import PROVIDERS_TYPE
+from src.util import create_directory
 
 
 def generate_message(provider: PROVIDERS_TYPE, gist_id: str, owner: str) -> str:

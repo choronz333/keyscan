@@ -2,15 +2,15 @@ from typing import List, Set, TypedDict
 
 import requests
 
-from gists import GistInfo, get_gist_info
 from processing import GIST_FILE_TYPE, extract_verifiable_value, preprocess_contents
-from llm_classify import (
+from verify import verify, VALIDITY
+from src.gists import GistInfo, get_gist_info
+from src.llm_classify import (
     CONFIDENCE_LEVELS_TYPE,
     ClassificationResponse,
     classify_lines,
 )
-from verify import verify, VALIDITY
-from save import save_record
+from src.save import save_record
 
 
 class ProcessGistResult(TypedDict):

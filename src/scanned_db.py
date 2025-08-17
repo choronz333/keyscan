@@ -1,6 +1,6 @@
 from typing import Set
 
-from util import create_file, print_err
+from src.util import create_file, print_err
 
 
 class ScannedDb:
