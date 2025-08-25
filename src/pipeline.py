@@ -75,8 +75,7 @@ def process_gist(
 
         if (
             validity == "VALID"
-            or (validity == "UNKNOWN" and confidence in ["MEDIUM", "HIGH"])
-            or confidence == "HIGH"
+            or confidence in ["MEDIUM", "HIGH"]
         ):
             path = save_record(
                 output_dir=output_dir,
