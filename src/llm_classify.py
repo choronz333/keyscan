@@ -1,7 +1,7 @@
 import json
 from typing import Any, Dict, List, Literal, Optional, Set, get_args
 
-import ollama
+from openai import OpenAI
 
 from providers import PROVIDERS_TYPE, parse_provider
 from prompt import get_prompt
@@ -11,6 +11,13 @@ from src.util import print_err
 CONFIDENCE_LEVELS_TYPE = Literal["NONE", "LOW", "MEDIUM", "HIGH"]
 CONFIDENCE_LEVELS: Set[CONFIDENCE_LEVELS_TYPE] = set(get_args(CONFIDENCE_LEVELS_TYPE))
 
+
+model="GLM-4.5-Air-AWQ"
+
+client = OpenAI(
+    base_url=
+    # api_key="sk-123"
+)
 
 def parse_confidence(confidence: str | None) -> CONFIDENCE_LEVELS_TYPE | None:
     if confidence in CONFIDENCE_LEVELS:
@@ -61,16 +68,13 @@ def classify_single_line(
 ) -> ClassificationResponse:
     messages = get_prompt(line)
 
-    response = ollama.chat(
+    response = client.chat.completions.create(
         model=model,
         messages=messages,
-        options={
-            "temperature": 0,
-            "num_predict": 4000,
-        },
+        temperature=0
     )
-
-    response_content = response.message.content
+    
+    response_content = response.choices[0].message.content
 
     return ClassificationResponse(line, response_content)
 

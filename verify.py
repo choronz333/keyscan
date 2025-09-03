@@ -159,13 +159,13 @@ PROVIDERS_TO_VERIFIER_MAP: Dict[PROVIDERS_TYPE, Callable[[str], bool]] = {
     "groq": verify_groq,
     "deepseek": verify_deepseek,
     "mistral": verify_mistral,
-    "cohere": verify_cohere,
+    # "cohere": verify_cohere,
     "together": verify_together,
     "openrouter": verify_openrouter,
-    "replicate": verify_replicate,
-    "fireworks": verify_fireworks,
+    # "replicate": verify_replicate,
+    # "fireworks": verify_fireworks,
     "huggingface": verify_huggingface,
-    "stability_ai": verify_stability_ai,
+    # "stability_ai": verify_stability_ai,
     "github": verify_github,
 }
 

@@ -56,24 +56,15 @@ GITHUB_TOKEN="ghp_..." # GitHub Token for increased API rate limits
 GITHUB_SESSION_COOKIE="..." # Optional: GitHub session cookie for HTML requests (unknown if this actually increases rate limits)
 ```
 
-5. Ensure that Ollama is installed.
-
 ## Usage
 
 Prepare a newline separated keywords file with terms to search for. An example
 file is provided in `keywords.txt`.
 
-Download a suitable Ollama model. We recommend using smaller models or models
-with controllable thinking behaviour. Larger thinking models are more prone to
-overthinking and looping behavior.
-
-Recommended model: `qwen3:1.7b` (`qwen3:4b` and larger is prone to
-overthinking.)
-
 Run the scanner from the repository root:
 
 ```sh
-python main.py --keywords-file keywords.txt --model qwen3:1.7b
+python main.py --keywords-file keywords.txt
 ```
 
 Optional arguments:
@@ -157,13 +148,3 @@ the Keyscan software. All users must agree that
   the usage of the software.
 - Users will follow GitHub's terms of service and all applicable local
   regulations.
-
-## License
-
-Keyscan is provided under GPLv3. By downloading or using this software,
-
-- Users agree that they may not modify the software for malicious use.
-- Users agree that they will only use the provided software for defensive and
-  educational purposes only.
-- Users agree that the author will not be held responsible for any outcomes
-  arising from usage of the software.

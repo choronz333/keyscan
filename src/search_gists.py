@@ -11,7 +11,7 @@ GIST_SEARCH_BASE_URL = "https://gist.github.com/search"
 
 
 def build_search_url(keyword: str, page_number: int, file_type: str) -> str:
-    return f"{GIST_SEARCH_BASE_URL}?l={file_type}&q={urllib.parse.quote(keyword)}&p={page_number}"
+    return f"{GIST_SEARCH_BASE_URL}?q={urllib.parse.quote(keyword)}&p={page_number}"    # l={file_type}&  extension, filename
 
 
 def get_headers() -> dict:

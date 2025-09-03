@@ -22,11 +22,12 @@ def parse_args() -> Arguments:
         type=str,
         required=True,
         help="Path to a newline-separated list of keywords to search",
+        # default="keywords.txt"
     )
     parser.add_argument(
         "--model",
         type=str,
-        required=True,
+        default="GLM-4.5-Air-AWQ"
     )
     parser.add_argument(
         "--file-type",

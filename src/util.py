@@ -16,13 +16,17 @@ def create_file(path: str) -> None:
 
 def save_processing_state(output_path: str, keyword: str, page_number: int) -> None:
     state_path = os.path.join(output_path, "state", f"{round(time.time())}.json")
+    parent_directory = os.path.dirname(state_path)
+    create_directory(parent_directory)
     state = {
         "keyword": keyword,
         "last_page": page_number,
         "updated_at": datetime.now().strftime("%H:%M:%S on %B %d, %Y"),
     }
-    with open(state_path, "w", encoding="utf-8") as f:
+    with open(state_path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(state, f, indent=4)
+        # with open(state_path, "w", encoding="utf-8") as f:
+
 
 def print_err(str):
     print(str, file=sys.stderr)

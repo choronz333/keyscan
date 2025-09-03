@@ -79,7 +79,7 @@ class GistInfo:
 
 
 def get_gist_info(
-    session: requests.Session, gist_id: str, file_type: str, timeout_seconds: int = 20
+    session: requests.Session, gist_id: str, file_type: str, timeout_seconds: int = 60
 ) -> GistInfo:
     """
     Return an array of strings containing the file contents of the desired type.
